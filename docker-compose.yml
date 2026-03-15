@@ -1,0 +1,28 @@
+services:
+  # バックエンド (Go)
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app
+    environment:
+      - DB_PATH=/app/test.db
+
+  # フロントエンド (Next.js)
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules # ライブラリはコンテナ内を優先
+    environment:
+      - NODE_ENV=development
+
+  # 分析ツール (Python)
+  analysis:
+    build: ./analysis
+    volumes:
+      - ./analysis:/app
+      - ./backend/test.db:/app/test.db # BackendのDBを共有して読み込む設定
